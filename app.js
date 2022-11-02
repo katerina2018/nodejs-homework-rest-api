@@ -19,7 +19,9 @@ app.use((req, res) => {
 })
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message })
+  console.error("Got error: ", err.message);
+  res.status(500).json({ error: "Server Internal Error" });
+  
 })
 
 module.exports = app

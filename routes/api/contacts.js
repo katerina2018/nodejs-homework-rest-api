@@ -1,23 +1,9 @@
 const express = require("express");
-const Joi = require("joi");
 const db = require("../../models/contacts");
+const schemaData =require("../../schema/schema");
+const validationBody=require("../../middleware/validationBody")
 const router = express.Router();
 
-const checkData = (name, email, phone, res) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required(),
-    email: Joi.string().required(),
-    phone: Joi.number().required(),
-  });
-
-  const { error } = schema.validate({ name, email, phone });
-  if (error) {
-    return res.status(400).json({
-      message: "missing fields",
-      error: error.message,
-    });
-  }
-};
 
 router.get("/", async (req, res, next) => {
   const contacts = await db.listContacts();
@@ -34,9 +20,10 @@ router.get("/:contactId", async (req, res, next) => {
   return res.status(200).json({ contactById: contactById });
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", validationBody(schemaData ), async (req, res, next) => {
   const { name, email, phone } = req.body;
-  checkData(name, email, phone, res);
+  
+  
 
   const addContact = await db.addContact({ name, email, phone });
 
@@ -52,10 +39,17 @@ router.delete("/:contactId", async (req, res, next) => {
   return res.status(200).json({ "delete contactById": contactById });
 });
 
-router.put("/:contactId", async (req, res, next) => {
+router.put("/:contactId",validationBody(schemaData ), async (req, res, next) => {
   const { contactId } = req.params;
   const { name, email, phone } = req.body;
-  checkData(name, email, phone, res);
+  
+  // const { error } = schemaData.validate({ name, email, phone });
+  // if (error) {
+  //   return res.status(400).json({
+  //     message: "missing fields",
+  //     error: error.message,
+  //   });
+  // }
 
   const updateContact = await db.updateContact(contactId, {
     name,
