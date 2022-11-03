@@ -19,7 +19,11 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error("Got error: ", err.message);
+  if (err) {
+    console.error("Got error: ", err.message);
+    console.error(" Error status:", err.status);
+  }
+
   res.status(500).json({ error: "Server Internal Error" });
 });
 
