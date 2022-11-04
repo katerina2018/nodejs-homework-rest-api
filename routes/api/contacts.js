@@ -20,9 +20,7 @@ router.get("/:contactId", async (req, res, next) => {
 });
 
 router.post("/", validationBody(schemaData), async (req, res, next) => {
-  const { name, email, phone } = req.body;
-
-  const addContact = await db.addContact({ name, email, phone });
+  const addContact = await db.addContact(req.body);
 
   return res.status(201).json({ newContact: addContact });
 });
@@ -41,13 +39,8 @@ router.put(
   validationBody(schemaData),
   async (req, res, next) => {
     const { contactId } = req.params;
-    const { name, email, phone } = req.body;
 
-    const updateContact = await db.updateContact(contactId, {
-      name,
-      email,
-      phone,
-    });
+    const updateContact = await db.updateContact(contactId, req.body);
     if (!updateContact) {
       return res.status(404).json({
         message: "Not found",
