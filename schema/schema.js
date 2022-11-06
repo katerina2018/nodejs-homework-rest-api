@@ -1,3 +1,11 @@
+const { Schema } = require("mongoose");
+
+const contactSchema = new Schema({
+  name: { type: String },
+  email: { type: String },
+  phone: { type: String },
+});
+
 const Joi = require("joi");
 
 const schemaData = Joi.object({
@@ -9,4 +17,4 @@ const schemaData = Joi.object({
     .required(),
 });
 
-module.exports = schemaData;
+module.exports = { contactSchema, schemaData };

@@ -1,7 +1,6 @@
 const validationBody = (schemaData) => {
   return async (req, res, next) => {
-    const { name, email, phone } = req.body;
-    const { error } = schemaData.validate({ name, email, phone });
+    const { error } = schemaData.validate(req.body);
     if (error) {
       return res.status(400).json({
         message: "missing fields",
