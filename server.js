@@ -3,11 +3,8 @@ const dotenv = require("dotenv").config();
 const app = require("./app");
 
 const { HOST_DB } = process.env;
-async function main() {
+(async function main() {
   try {
-    if (!HOST_DB) {
-      throw new Error("HOST_DB not set!");
-    }
     await mongoose.connect(HOST_DB);
     console.log("Database connection successful");
 
@@ -18,5 +15,4 @@ async function main() {
     console.error("Error:", error.message);
     process.exit(1);
   }
-}
-main();
+})();

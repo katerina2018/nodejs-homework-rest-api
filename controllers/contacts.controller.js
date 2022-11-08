@@ -22,9 +22,8 @@ async function create(req, res, next) {
 async function deleteById(req, res, next) {
   const { id } = req.params;
 
-  const contact = await Contact.findById(id);
+  const contact = await Contact.findByIdAndDelete(id);
   if (contact) {
-    await Contact.findByIdAndDelete(id);
     return res.json({ data: { contact } });
   }
   return next(createNotFoundHttpError());
@@ -32,11 +31,14 @@ async function deleteById(req, res, next) {
 
 async function updateById(req, res, next) {
   const { id } = req.params;
+
   const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
   });
-
-  return res.json({ data: { contact: updatedContact } });
+  if (updatedContact) {
+    return res.json({ data: { contact: updatedContact } });
+  }
+  return next(createNotFoundHttpError());
 }
 
 async function findOneById(req, res, next) {
@@ -52,21 +54,11 @@ async function findOneById(req, res, next) {
 async function favoriteById(req, res, next) {
   const { id } = req.params;
 
-  const contact = await Contact.findById(id);
-  if (contact) {
-    if (req.body.favorite) {
-      const updatedStatusContact = await Contact.findByIdAndUpdate(
-        id,
-        req.body,
-        {
-          new: true,
-        }
-      );
-
-      return res.json({ data: { contact: updatedStatusContact } });
-    }
-
-    return res.status(400).json({ message: "missing field favorite" });
+  const updatedStatusContact = await Contact.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  if (updatedStatusContact) {
+    return res.json({ data: { contact: updatedStatusContact } });
   }
   return next(createNotFoundHttpError());
 }
