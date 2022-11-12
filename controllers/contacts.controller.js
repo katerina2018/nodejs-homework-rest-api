@@ -1,8 +1,22 @@
-const Contact = require("../models/contacts");
+const Contact = require("../models/contacts.model");
 const { createNotFoundHttpError } = require("../helpers");
 
 async function getAll(req, res, next) {
-  const contacts = await Contact.find();
+  const { limit, page } = req.query;
+  const { favorite } = req.query;
+  console.log(":", favorite);
+  let contacts = {};
+
+  contacts = await Contact.find({});
+
+  if (limit || page) {
+    const skip = (page - 1) * limit;
+    contacts = await Contact.find({}).skip(skip).limit(limit);
+  }
+
+  if (favorite) {
+    contacts = await Contact.find({ favorite: "true" }).exec();
+  }
 
   return res.json({
     data: contacts,
