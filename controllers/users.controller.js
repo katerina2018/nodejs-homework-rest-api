@@ -1,5 +1,6 @@
 const { User } = require("../models/user.model");
 const { User: UserModel } = require("../models/user.model");
+const { uploadImage } = require("../services/avatar.service");
 
 async function getContacts(req, res, next) {
   const { user } = req;
@@ -30,7 +31,30 @@ async function subscriptionUsers(req, res, next) {
   return next(createNotFoundHttpError());
 }
 
+async function updatedAvatarURL(req, res, next) {
+  const { user } = req;
+  const id = user.id;
+
+  const avatarURL = await uploadImage(id, req.file);
+
+  const updateAvatarURL = await User.findByIdAndUpdate(id, avatarURL, {
+    new: true,
+  });
+
+  if (updateAvatarURL) {
+    const { email, avatarURL } = updateAvatarURL;
+    return res.json({
+      user: {
+        email,
+        avatarURL,
+      },
+    });
+  }
+  return next(createNotFoundHttpError());
+}
+
 module.exports = {
   getContacts,
   subscriptionUsers,
+  updatedAvatarURL,
 };

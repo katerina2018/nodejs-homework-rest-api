@@ -2,13 +2,14 @@ const { User } = require("../models/user.model");
 const { Conflict, Unauthorized } = require("http-errors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+var gravatar = require("gravatar");
 
 const { JWT_SECRET } = process.env;
 
 async function signup(req, res, next) {
   const { email, password, subscription } = req.body;
-
-  const user = new User({ email, password, subscription });
+  const avatarURL = gravatar.url(email, { s: "100", r: "x", d: "retro" }, true);
+  const user = new User({ email, password, subscription, avatarURL });
   try {
     await user.save();
   } catch (error) {
@@ -23,6 +24,7 @@ async function signup(req, res, next) {
     user: {
       email,
       subscription: user.subscription,
+      avatarURL: user.avatarURL,
     },
   });
 }
@@ -42,7 +44,7 @@ async function login(req, res, next) {
   }
 
   const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "55m",
   });
   user.token = token;
   await User.findByIdAndUpdate(user._id, user);
