@@ -16,11 +16,11 @@ app.use(express.json());
 app.use("/api/users", authRouter);
 app.use("/api/contacts", router);
 
+app.use(express.static("public"));
+
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
 });
-
-app.use(express.static("public"));
 
 app.use((err, req, res, next) => {
   if (err.status && err.message) {
