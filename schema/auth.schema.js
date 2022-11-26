@@ -11,4 +11,13 @@ const authSchemaData = Joi.object({
   subscription: Joi.string(),
 });
 
-module.exports = authSchemaData;
+const verifySchemaUser = Joi.object({
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net"] },
+    })
+    .required(),
+});
+
+module.exports = { authSchemaData, verifySchemaUser };
